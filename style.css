@@ -4,10 +4,20 @@
     box-sizing: border-box;
 }
 
+:root {
+    --background: #f5f3ee;
+    --text: #1e1e1e;
+    --secondary-text: #66615b;
+    --accent: #315c4a;
+    --border: #d8d3ca;
+}
+
 body {
     font-family: Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--text);
     line-height: 1.6;
-    color: #222;
+    
 }
 
 nav {
