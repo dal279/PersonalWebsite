@@ -309,25 +309,223 @@
     });
 
     /* ----------------------------------------------------------------------
-       Lightbox (real photos only)
+       Photo albums + lightbox (photos.html)
+       Data comes from photos-data.js (window.PHOTO_ALBUMS)
        ---------------------------------------------------------------------- */
 
+    var ALBUMS = window.PHOTO_ALBUMS || [];
+    var CAT_LABEL = { portraits: "Portraits", shoots: "Shoots", events: "Events", everyday: "Everyday", classwork: "Class Work" };
+    var albumIndex = document.getElementById("albums-index");
+    var albumView = document.getElementById("album-view");
     var lightbox = document.querySelector(".lightbox");
+
+    function findAlbum(slug) {
+        for (var i = 0; i < ALBUMS.length; i++) if (ALBUMS[i].slug === slug) return ALBUMS[i];
+        return null;
+    }
+
+    function photoSrc(album, p, thumb) {
+        return "images/photos/" + album.slug + "/" + (thumb ? "thumbs/" : "") + p.f + ".jpg";
+    }
+
+    function photoAlt(album, p, i) {
+        return (p.t ? p.t + ", from " : "Photo " + (i + 1) + " of " + album.photos.length + " from ") + album.title;
+    }
+
+    /* --- Lightbox --- */
+    var lb = null;
     if (lightbox && typeof lightbox.showModal === "function") {
-        var lbImg = lightbox.querySelector("img");
-        var lbCap = lightbox.querySelector(".lightbox-caption");
-        document.querySelectorAll("[data-lightbox]").forEach(function (btn) {
-            btn.addEventListener("click", function () {
-                var img = btn.querySelector("img");
-                lbImg.src = img.currentSrc || img.src;
-                lbImg.alt = img.alt;
-                lbCap.textContent = btn.getAttribute("data-caption") || img.alt;
-                lightbox.showModal();
+        lb = (function () {
+            var img = lightbox.querySelector(".lb-img");
+            var count = lightbox.querySelector(".lb-count");
+            var title = lightbox.querySelector(".lb-title");
+            var exif = lightbox.querySelector(".lb-exif");
+            var prev = lightbox.querySelector(".lb-prev");
+            var next = lightbox.querySelector(".lb-next");
+            var album = null;
+            var index = 0;
+            var returnFocus = null;
+
+            function chip(text, label) {
+                var li = document.createElement("li");
+                if (label) {
+                    var s = document.createElement("span");
+                    s.textContent = label;
+                    li.appendChild(s);
+                }
+                li.appendChild(document.createTextNode(text));
+                return li;
+            }
+
+            function preload(i) {
+                var p = album.photos[i];
+                if (p) new Image().src = photoSrc(album, p, false);
+            }
+
+            function show(i) {
+                index = Math.max(0, Math.min(album.photos.length - 1, i));
+                var p = album.photos[index];
+                var fullSrc = photoSrc(album, p, false);
+                img.src = photoSrc(album, p, true); // instant, then swap in the full size
+                img.alt = photoAlt(album, p, index);
+                var full = new Image();
+                full.onload = function () {
+                    if (album.photos[index] === p) img.src = fullSrc;
+                };
+                full.src = fullSrc;
+
+                count.textContent = album.title + " · " + (index + 1) + " of " + album.photos.length;
+                title.textContent = p.t || "";
+                title.hidden = !p.t;
+
+                exif.innerHTML = "";
+                if (p.cam) exif.appendChild(chip(p.cam));
+                if (p.lens && p.lens.indexOf(p.cam || "~") === -1) exif.appendChild(chip(p.lens));
+                if (p.fl) exif.appendChild(chip(p.fl));
+                if (p.ap) exif.appendChild(chip(p.ap));
+                if (p.ss) exif.appendChild(chip(p.ss));
+                if (p.iso) exif.appendChild(chip(String(p.iso), "ISO"));
+
+                prev.hidden = index === 0;
+                next.hidden = index === album.photos.length - 1;
+                preload(index + 1);
+                preload(index - 1);
+            }
+
+            function open(a, i) {
+                album = a;
+                returnFocus = document.activeElement;
+                show(i);
+                if (!lightbox.open) lightbox.showModal();
+            }
+
+            prev.addEventListener("click", function () { show(index - 1); });
+            next.addEventListener("click", function () { show(index + 1); });
+
+            lightbox.addEventListener("click", function (e) {
+                if (e.target === lightbox || e.target.classList.contains("lb-stage") || e.target.closest(".lightbox-close")) {
+                    lightbox.close();
+                }
             });
+
+            lightbox.addEventListener("keydown", function (e) {
+                if (e.key === "ArrowLeft") { e.preventDefault(); show(index - 1); }
+                if (e.key === "ArrowRight") { e.preventDefault(); show(index + 1); }
+            });
+
+            lightbox.addEventListener("close", function () {
+                img.removeAttribute("src");
+                if (returnFocus && returnFocus.focus) returnFocus.focus({ preventScroll: true });
+            });
+
+            // Swipe left/right on touch screens
+            var startX = null;
+            var startY = null;
+            lightbox.addEventListener("touchstart", function (e) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            }, { passive: true });
+            lightbox.addEventListener("touchend", function (e) {
+                if (startX === null) return;
+                var dx = e.changedTouches[0].clientX - startX;
+                var dy = e.changedTouches[0].clientY - startY;
+                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) show(index + (dx < 0 ? 1 : -1));
+                startX = null;
+            });
+
+            return { open: open };
+        })();
+    }
+
+    document.querySelectorAll("[data-open-album]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var a = findAlbum(btn.getAttribute("data-open-album"));
+            if (!a || !lb) return;
+            var f = btn.getAttribute("data-open-photo");
+            var i = 0;
+            a.photos.forEach(function (p, k) { if (p.f === f) i = k; });
+            lb.open(a, i);
         });
-        lightbox.addEventListener("click", function (e) {
-            if (e.target === lightbox || e.target.closest(".lightbox-close")) lightbox.close();
-        });
+    });
+
+    /* --- Album view, driven by the URL hash (#album-vienna, #cat-portraits) --- */
+    if (albumIndex && albumView && ALBUMS.length) {
+        var grid = document.getElementById("album-photos");
+        var section = document.getElementById("albums");
+        var current = null;
+
+        function renderAlbum(a) {
+            current = a;
+            albumView.querySelector("[data-album-cat]").textContent = CAT_LABEL[a.cat] || "";
+            albumView.querySelector("[data-album-title]").textContent = a.title;
+            var blurb = albumView.querySelector("[data-album-blurb]");
+            blurb.textContent = a.blurb || "";
+            blurb.hidden = !a.blurb;
+
+            var cams = [];
+            a.photos.forEach(function (p) { if (p.cam && cams.indexOf(p.cam) === -1) cams.push(p.cam); });
+            albumView.querySelector("[data-album-meta]").textContent =
+                a.photos.length + (a.photos.length === 1 ? " photo" : " photos") + " · Shot on " + cams.join(" and ");
+
+            var frag = document.createDocumentFragment();
+            a.photos.forEach(function (p, i) {
+                var b = document.createElement("button");
+                b.className = "album-photo";
+                b.type = "button";
+                b.setAttribute("aria-label", "View " + photoAlt(a, p, i));
+                var im = document.createElement("img");
+                im.src = photoSrc(a, p, true);
+                im.alt = "";
+                im.width = p.w;
+                im.height = p.h;
+                im.loading = "lazy";
+                im.decoding = "async";
+                b.appendChild(im);
+                b.addEventListener("click", function () { if (lb) lb.open(a, i); });
+                frag.appendChild(b);
+            });
+            grid.innerHTML = "";
+            grid.appendChild(frag);
+
+            var k = ALBUMS.indexOf(a);
+            var prevA = ALBUMS[(k - 1 + ALBUMS.length) % ALBUMS.length];
+            var nextA = ALBUMS[(k + 1) % ALBUMS.length];
+            var pl = albumView.querySelector("[data-album-prev]");
+            var nl = albumView.querySelector("[data-album-next]");
+            pl.href = "#album-" + prevA.slug;
+            pl.textContent = prevA.title;
+            pl.setAttribute("data-label", "Previous album");
+            nl.href = "#album-" + nextA.slug;
+            nl.textContent = nextA.title;
+            nl.setAttribute("data-label", "Next album");
+        }
+
+        function route(initial) {
+            var h = decodeURIComponent(window.location.hash.slice(1));
+            if (h.indexOf("album-") === 0) {
+                var a = findAlbum(h.slice(6));
+                if (a) {
+                    if (current !== a) renderAlbum(a);
+                    albumIndex.hidden = true;
+                    albumView.hidden = false;
+                    document.title = a.title + " · Photos · Daniel Li";
+                    section.scrollIntoView({ behavior: initial || reduceMotion ? "auto" : "smooth" });
+                    albumView.querySelector("[data-album-title]").focus({ preventScroll: true });
+                    return;
+                }
+            }
+            albumIndex.hidden = false;
+            albumView.hidden = true;
+            document.title = "Photos · Daniel Li";
+            if (h.indexOf("cat-") === 0) {
+                var chipBtn = albumIndex.querySelector('[data-filter="' + h.slice(4) + '"]');
+                if (chipBtn) chipBtn.click();
+                section.scrollIntoView({ behavior: initial || reduceMotion ? "auto" : "smooth" });
+            }
+        }
+
+        window.addEventListener("hashchange", function () { route(false); });
+        route(true);
     }
 
     /* ----------------------------------------------------------------------
