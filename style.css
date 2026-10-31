@@ -2657,3 +2657,19 @@ a.recipe-card {
         justify-content: center;
     }
 }
+
+/* Hero photo: rounded top, bottom edge fades into the page */
+.hero-photo {
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+}
+
+.hero-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
