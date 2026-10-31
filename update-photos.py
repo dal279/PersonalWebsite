@@ -7,9 +7,9 @@ The folders are the source of truth. Make changes in Finder, then run:
 
 What it handles
   - Deleted a photo or a whole album folder   -> removed from the site
-  - Renamed an album folder                   -> recognized by its photos; keeps the
-                                                 album's title, category, dates, camera
-                                                 settings and featured-slider spots
+  - Renamed an album folder                   -> the album is renamed on the site to
+                                                 match; keeps its category, dates,
+                                                 camera settings and slider spots
   - Dropped new photos into an album folder   -> web-sized copy + thumbnail made,
     (or a brand-new folder of photos)            camera settings and date read from the
                                                  photo, original moved to
@@ -58,8 +58,8 @@ HEADER = """/* Photo data for photos.html, written by update-photos.py.
      "date"   optional text that replaces the album's date, e.g. "Summer 2026"
      "d"      the date a photo was taken, YYYY-MM-DD
      "t"      optional photo title
-   "folder" is the folder name in images/photos/. Rename the folder instead of
-   editing it, and the script updates it.
+   "folder" is the folder name in images/photos/. Renaming a folder renames the
+   album on the site too (dashes become spaces: "easter-2026" -> "Easter 2026").
 
    PHOTO_FEATURED is the slider at the top of the Photos page, in order.
 */
@@ -220,8 +220,12 @@ def import_photo(folder, filename, used):
 
 
 def title_from_folder(folder):
-    t = re.sub(r"[-_]+", " ", folder).strip()
-    return t[:1].upper() + t[1:] if t else folder
+    """Folder name -> album name: "easter-2026" -> "Easter 2026"; names typed with
+    spaces ("Vienna in NYC") are used exactly as written."""
+    if " " in folder.strip():
+        return folder.strip()
+    words = re.sub(r"[-_]+", " ", folder).split()
+    return " ".join(w[:1].upper() + w[1:] if w.islower() else w for w in words) or folder
 
 
 def ensure_gitignore():
@@ -303,8 +307,9 @@ def main():
                 if s["album"] == old:
                     s["album"] = d
             best["folder"] = d
+            old_title, best["title"] = best["title"], title_from_folder(d)
             claimed[d] = best
-            report.append(f'Renamed folder "{old}" -> "{d}" (album "{best["title"]}" kept as is)')
+            report.append(f'Renamed album "{old_title}" -> "{best["title"]}" (folder "{old}" -> "{d}")')
 
     for a in missing:
         if not any(a is c for c in claimed.values()):

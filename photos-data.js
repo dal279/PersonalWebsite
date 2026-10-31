@@ -11,8 +11,8 @@
      "date"   optional text that replaces the album's date, e.g. "Summer 2026"
      "d"      the date a photo was taken, YYYY-MM-DD
      "t"      optional photo title
-   "folder" is the folder name in images/photos/. Rename the folder instead of
-   editing it, and the script updates it.
+   "folder" is the folder name in images/photos/. Renaming a folder renames the
+   album on the site too (dashes become spaces: "easter-2026" -> "Easter 2026").
 
    PHOTO_FEATURED is the slider at the top of the Photos page, in order.
 */
@@ -449,8 +449,8 @@ window.PHOTO_ALBUMS = [
     ]
   },
   {
-    "folder": "emmaus-basketball",
-    "title": "Emmaus Basketball",
+    "folder": "emmaus-basketball-spring26",
+    "title": "Emmaus Basketball Spring26",
     "cat": "events",
     "cover": "dsc0301",
     "photos": [
@@ -486,8 +486,8 @@ window.PHOTO_ALBUMS = [
     ]
   },
   {
-    "folder": "volleyball",
-    "title": "Volleyball",
+    "folder": "volleyball-PVT26",
+    "title": "Volleyball PVT26",
     "cat": "events",
     "cover": "dsc0569",
     "photos": [
@@ -657,8 +657,8 @@ window.PHOTO_ALBUMS = [
     ]
   },
   {
-    "folder": "easter",
-    "title": "Easter",
+    "folder": "easter-2026",
+    "title": "Easter 2026",
     "cat": "events",
     "cover": "dsc0181",
     "photos": [
