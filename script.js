@@ -767,6 +767,79 @@
     }
 
     /* ----------------------------------------------------------------------
+       Recipes: the grid on recipes.html and each recipe page (recipe.html#id)
+       are built from recipes-data.js.
+       ---------------------------------------------------------------------- */
+
+    var RECIPES = window.RECIPES || [];
+    var RECIPE_CAT = { mains: "Main", sides: "Side", desserts: "Dessert", breakfast: "Breakfast" };
+
+    function recipePic(r, cls) {
+        if (r.photo) {
+            var wrap = el("div", cls || "dish-photo");
+            var img = document.createElement("img");
+            img.src = "images/food/" + r.photo;
+            img.alt = r.alt || r.name || "";
+            img.width = 1600; img.height = 1067;
+            img.decoding = "async";
+            wrap.appendChild(img);
+            return wrap;
+        }
+        var tpl = document.getElementById("recipe-ph");
+        return tpl ? tpl.content.firstElementChild.cloneNode(true) : el("div");
+    }
+
+    var recipeGrid = document.getElementById("recipe-grid");
+    if (recipeGrid) {
+        RECIPES.forEach(function (r) {
+            var card = el("a", "recipe-card reveal");
+            card.href = "recipe.html#" + encodeURIComponent(r.id);
+            card.setAttribute("data-cat", r.category || "");
+            var pic = recipePic(r);
+            var im = pic.querySelector && pic.querySelector("img");
+            if (im) im.loading = "lazy";
+            card.appendChild(pic);
+            var body = el("div", "recipe-body");
+            body.appendChild(el("span", "recipe-cat", RECIPE_CAT[r.category] || r.category || ""));
+            body.appendChild(el("h3", null, r.name || "Recipe name"));
+            body.appendChild(el("span", "link-more", "See ingredients"));
+            card.appendChild(body);
+            recipeGrid.appendChild(card);
+        });
+    }
+
+    if (document.querySelector("[data-recipe-name]")) {
+        var showRecipe = function () {
+            var id = decodeURIComponent(location.hash.replace(/^#/, ""));
+            var r = null;
+            for (var i = 0; i < RECIPES.length; i++) if (RECIPES[i].id === id) r = RECIPES[i];
+            if (!r) r = RECIPES[0];
+            if (!r) return;
+            var name = r.name || "Recipe name";
+            document.title = name + " · Daniel Li";
+            document.querySelector("[data-recipe-name]").textContent = name;
+            document.querySelector("[data-recipe-cat]").textContent = RECIPE_CAT[r.category] || r.category || "";
+            var media = document.querySelector("[data-recipe-photo]");
+            media.innerHTML = "";
+            media.appendChild(recipePic(r, "dish-photo dish-photo--feature"));
+
+            var ul = document.querySelector("[data-recipe-ingredients]");
+            ul.innerHTML = "";
+            var ing = (r.ingredients || []).filter(function (x) { return String(x).trim(); });
+            if (ing.length) ing.forEach(function (x) { ul.appendChild(el("li", null, x)); });
+            else ul.appendChild(el("li", "placeholder-text", "Ingredients coming soon."));
+
+            var steps = (r.steps || []).filter(function (x) { return String(x).trim(); });
+            var ol = document.querySelector("[data-recipe-steps]");
+            ol.innerHTML = "";
+            steps.forEach(function (x) { ol.appendChild(el("li", null, x)); });
+            document.querySelector("[data-recipe-steps-wrap]").hidden = !steps.length;
+        };
+        window.addEventListener("hashchange", function () { showRecipe(); window.scrollTo(0, 0); });
+        showRecipe();
+    }
+
+    /* ----------------------------------------------------------------------
        Scroll reveal
        ---------------------------------------------------------------------- */
 
