@@ -2587,3 +2587,73 @@ a.recipe-card {
         position: static;
     }
 }
+
+/* Résumé, under the contact cards */
+.resume {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: 48px;
+    align-items: center;
+    max-width: 820px;
+    margin: 64px auto 0;
+    padding: 36px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+}
+
+.resume-preview {
+    display: block;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(40, 30, 20, 0.08), 0 18px 40px -22px rgba(40, 30, 20, 0.45);
+    transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+}
+
+.resume-preview:hover {
+    transform: translateY(-4px) rotate(-0.6deg);
+    box-shadow: 0 1px 2px rgba(40, 30, 20, 0.08), 0 28px 50px -24px rgba(40, 30, 20, 0.5);
+}
+
+.resume-preview img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.resume-text h3 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-top: 6px;
+}
+
+.resume-text p {
+    color: var(--muted);
+    font-size: 17px;
+    margin-top: 10px;
+}
+
+.resume-text .cta-row {
+    margin-top: 24px;
+    justify-content: flex-start;
+}
+
+@media (max-width: 834px) {
+    .resume {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .resume-preview {
+        max-width: 240px;
+        margin: 0 auto;
+    }
+
+    .resume-text .cta-row {
+        justify-content: center;
+    }
+}
