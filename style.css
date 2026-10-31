@@ -2382,3 +2382,18 @@ a.tile:hover .tile-photo img {
         transform: none;
     }
 }
+
+/* Headshot (About section) */
+.headshot {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--ph-bg);
+    box-shadow: 0 30px 60px -36px rgba(20, 15, 10, 0.45);
+}
+
+.headshot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
