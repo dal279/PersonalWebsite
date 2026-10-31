@@ -43,28 +43,25 @@
             <div class="container">
                 <span class="eyebrow">Photos</span>
                 <h1 class="headline">Through my lens.</h1>
-                <p class="lede">788 photos across 32 albums: portraits, styled shoots, events and everyday moments, almost all shot on a Nikon D90.</p>
+                <p class="lede"><span data-stat="photos">774</span> photos across <span data-stat="albums">31</span> albums: portraits, styled shoots, events and everyday moments, almost all shot on a Nikon D90.</p>
             </div>
         </header>
 
-        <section class="section section--tight" id="featured" aria-labelledby="featured-title">
-            <div class="container featured-photo">
-                <div class="photo-frame reveal">
-                    <button class="photo-btn" data-open-album="runway-combat" data-open-photo="dsc0671" aria-label="View Runway Combat photo full screen">
-                        <img src="images/photos/runway-combat/dsc0671.jpg" alt="Two performers posing on stage in front of a projected dragon emblem at the Runway Combat shoot" width="1063" height="1600">
-                    </button>
-                </div>
-                <div class="reveal">
-                    <span class="eyebrow">Featured</span>
-                    <h2 class="section-title" id="featured-title">Runway Combat</h2>
-                    <p class="lede placeholder-text">Add a sentence or two about this shoot: the event, where it was, and what you were going for.</p>
-                    <ul class="photo-meta">
-                        <li><span>Camera</span><span>Nikon D90</span></li>
-                        <li><span>Lens</span><span>18–55mm f/3.5–5.6</span></li>
-                        <li><span>Focal length</span><span>24mm</span></li>
-                        <li><span>Exposure</span><span>f/5 · 1/80s · ISO 1250</span></li>
-                    </ul>
-                    <a class="link-more" href="#album-runway-combat" style="margin-top:20px">See the whole album</a>
+        <section class="section section--tight" id="featured" aria-label="Featured photos">
+            <div class="container">
+                <div class="fslider" data-fslider>
+                    <div class="fslider-viewport">
+                        <div class="fslider-track"></div>
+                    </div>
+                    <div class="fslider-controls">
+                        <button class="fslider-btn" data-fslider-prev aria-label="Previous featured photo"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                        <div class="fslider-dots" role="group" aria-label="Choose a featured photo"></div>
+                        <button class="fslider-btn" data-fslider-next aria-label="Next featured photo"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                        <button class="fslider-btn fslider-play" data-fslider-play aria-label="Pause slideshow">
+                            <svg class="icon-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 2v8M8.5 2v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                            <svg class="icon-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 2l6 4-6 4z" fill="currentColor"/></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -76,281 +73,9 @@
                         <h2 class="section-title" id="albums-title">Albums</h2>
                         <p class="lede">Tap an album to see every shot, with the camera settings behind each one.</p>
                     </div>
-                    <div class="filter-bar" data-filter-group="album-grid" role="group" aria-label="Filter albums"><button class="chip" data-filter="all" aria-pressed="true">All <span class="chip-count">32</span></button><button class="chip" data-filter="portraits" aria-pressed="false">Portraits <span class="chip-count">6</span></button><button class="chip" data-filter="shoots" aria-pressed="false">Shoots <span class="chip-count">6</span></button><button class="chip" data-filter="events" aria-pressed="false">Events <span class="chip-count">5</span></button><button class="chip" data-filter="everyday" aria-pressed="false">Everyday <span class="chip-count">9</span></button><button class="chip" data-filter="classwork" aria-pressed="false">Class Work <span class="chip-count">6</span></button></div>
-                    <div class="album-grid" id="album-grid">
-                    <a class="album-card reveal" href="#album-vienna" data-cat="portraits">
-                        <div class="album-cover"><img src="images/photos/vienna/thumbs/dsc1525.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Portraits</span>
-                            <h3>Vienna</h3>
-                            <p class="album-blurb">City steps, tall boots and night lights.</p>
-                            <span class="album-count">17 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-swas" data-cat="portraits">
-                        <div class="album-cover"><img src="images/photos/swas/thumbs/dsc1115.jpg" alt="" width="1319" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Portraits</span>
-                            <h3>Swas</h3>
-                            <p class="album-blurb">Bold color against tree bark.</p>
-                            <span class="album-count">18 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-ashley-grad" data-cat="portraits">
-                        <div class="album-cover"><img src="images/photos/ashley-grad/thumbs/dsc0727.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Portraits</span>
-                            <h3>Ashley · Graduation</h3>
-                            <p class="album-blurb">Graduation portraits in the woods and the stacks.</p>
-                            <span class="album-count">121 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-lily-grad" data-cat="portraits">
-                        <div class="album-cover"><img src="images/photos/lily-grad/thumbs/dsc0821.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Portraits</span>
-                            <h3>Lily · Graduation</h3>
-                            <p class="album-blurb">Graduation portraits under the campus gates.</p>
-                            <span class="album-count">28 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-dk-grad" data-cat="portraits">
-                        <div class="album-cover"><img src="images/photos/dk-grad/thumbs/dsc1018.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Portraits</span>
-                            <h3>DK · Graduation</h3>
-                            <p class="album-blurb">Red gown, brick and columns.</p>
-                            <span class="album-count">7 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-amanda-garden" data-cat="portraits">
-                        <div class="album-cover"><img src="images/photos/amanda-garden/thumbs/dsc0082.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Portraits</span>
-                            <h3>Amanda in the Garden</h3>
-                            <p class="album-blurb">A sun hat, a watering can and a lot of green.</p>
-                            <span class="album-count">24 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-runway-combat" data-cat="shoots">
-                        <div class="album-cover"><img src="images/photos/runway-combat/thumbs/dsc0671.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Shoots</span>
-                            <h3>Runway Combat</h3>
-                            <p class="album-blurb">Fight-night looks under stage light.</p>
-                            <span class="album-count">11 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-tax-the-rich" data-cat="shoots">
-                        <div class="album-cover"><img src="images/photos/tax-the-rich/thumbs/dsc0780.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Shoots</span>
-                            <h3>Tax the Rich</h3>
-                            <p class="album-blurb">A moody night shoot in blue.</p>
-                            <span class="album-count">16 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-the-uprising" data-cat="shoots">
-                        <div class="album-cover"><img src="images/photos/the-uprising/thumbs/dsc0945.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Shoots</span>
-                            <h3>The Uprising</h3>
-                            <p class="album-blurb">Masks, red light and a gray evening sky.</p>
-                            <span class="album-count">15 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-overdressed" data-cat="shoots">
-                        <div class="album-cover"><img src="images/photos/overdressed/thumbs/dsc0107.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Shoots</span>
-                            <h3>Overdressed</h3>
-                            <p class="album-blurb">Brick walls, fire escapes and pink light.</p>
-                            <span class="album-count">33 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-love-is-blind" data-cat="shoots">
-                        <div class="album-cover"><img src="images/photos/love-is-blind/thumbs/dsc0008.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Shoots</span>
-                            <h3>Love Is Blind</h3>
-                            <p class="album-blurb">Silhouettes against a projected heart.</p>
-                            <span class="album-count">25 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-photosynthesis" data-cat="shoots">
-                        <div class="album-cover"><img src="images/photos/photosynthesis/thumbs/dsc0247.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Shoots</span>
-                            <h3>Photosynthesis</h3>
-                            <p class="album-blurb">Portraits among the plants.</p>
-                            <span class="album-count">12 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-emmaus-basketball" data-cat="events">
-                        <div class="album-cover"><img src="images/photos/emmaus-basketball/thumbs/dsc0301.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Events</span>
-                            <h3>Emmaus Basketball</h3>
-                            <p class="album-blurb">Game night in the gym.</p>
-                            <span class="album-count">29 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-volleyball" data-cat="events">
-                        <div class="album-cover"><img src="images/photos/volleyball/thumbs/dsc0569.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Events</span>
-                            <h3>Volleyball</h3>
-                            <p class="album-blurb">Outdoor games and big spikes.</p>
-                            <span class="album-count">111 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-softball" data-cat="events">
-                        <div class="album-cover"><img src="images/photos/softball/thumbs/dsc0817.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Events</span>
-                            <h3>Softball</h3>
-                            <p class="album-blurb">Night games under the field lights.</p>
-                            <span class="album-count">6 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-engineering-event" data-cat="events">
-                        <div class="album-cover"><img src="images/photos/engineering-event/thumbs/dsc0197.jpg" alt="" width="1377" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Events</span>
-                            <h3>Engineering Event</h3>
-                            <p class="album-blurb">Talks and poster sessions.</p>
-                            <span class="album-count">29 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-easter" data-cat="events">
-                        <div class="album-cover"><img src="images/photos/easter/thumbs/dsc0181.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Events</span>
-                            <h3>Easter</h3>
-                            <p class="album-blurb">Crafts, laughs and a spring afternoon.</p>
-                            <span class="album-count">18 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-nature-walk" data-cat="everyday">
-                        <div class="album-cover"><img src="images/photos/nature-walk/thumbs/dsc0451.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Everyday</span>
-                            <h3>Nature Walk</h3>
-                            <p class="album-blurb">Friends wandering the spring woods.</p>
-                            <span class="album-count">112 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-poconos" data-cat="everyday">
-                        <div class="album-cover"><img src="images/photos/poconos/thumbs/dsc0725.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Everyday</span>
-                            <h3>Poconos</h3>
-                            <p class="album-blurb">Rushing creeks and a cozy cabin.</p>
-                            <span class="album-count">27 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-coudersport" data-cat="everyday">
-                        <div class="album-cover"><img src="images/photos/coudersport/thumbs/dsc0191.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Everyday</span>
-                            <h3>Coudersport Trip</h3>
-                            <p class="album-blurb">Winter roads, snowy ridges and dark-sky stars.</p>
-                            <span class="album-count">32 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-botanical-garden" data-cat="everyday">
-                        <div class="album-cover"><img src="images/photos/botanical-garden/thumbs/dsc1059.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Everyday</span>
-                            <h3>Botanical Garden</h3>
-                            <p class="album-blurb">Flowers, bees and greenhouse green.</p>
-                            <span class="album-count">7 photos</span>
-                        </div>
-                    </a>
-                    
-                    <a class="album-card reveal" href="#album-little-bit-of-home" data-cat="everyday">
-                        <div class="album-cover"><img src="images/photos/little-bit-of-home/thumbs/dsc1100.jpg" alt="" width="1600" height="1110" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Everyday</span>
-                            <h3>A Little Bit of Home</h3>
-                            <p class="album-blurb">Bread dough, the piano and the dog.</p>
-                            <span class="album-count">3 photos</span>
-                        </div>
-                    </a>
-                    
-                    <a class="album-card reveal" href="#album-old-sd-card" data-cat="everyday">
-                        <div class="album-cover"><img src="images/photos/old-sd-card/thumbs/dsc1554.jpg" alt="" width="1600" height="1244" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Everyday</span>
-                            <h3>From an Old SD Card</h3>
-                            <p class="album-blurb">Rediscovered shots of friends.</p>
-                            <span class="album-count">11 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-pool" data-cat="everyday">
-                        <div class="album-cover"><img src="images/photos/pool/thumbs/readystart.jpg" alt="" width="1600" height="1063" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Everyday</span>
-                            <h3>Pool</h3>
-                            <p class="album-blurb">An afternoon at the pool table.</p>
-                            <span class="album-count">28 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-shutter-study" data-cat="classwork">
-                        <div class="album-cover"><img src="images/photos/shutter-study/thumbs/fleetinglove-camerablur.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Class Work</span>
-                            <h3>Shutter Speed Study</h3>
-                            <p class="album-blurb">Motion blur, camera blur, freezing and panning.</p>
-                            <span class="album-count">4 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-aperture-study" data-cat="classwork">
-                        <div class="album-cover"><img src="images/photos/aperture-study/thumbs/dsc0641.jpg" alt="" width="1600" height="1063" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Class Work</span>
-                            <h3>Aperture Study</h3>
-                            <p class="album-blurb">Landscapes and macro at different apertures.</p>
-                            <span class="album-count">6 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-assignment-3" data-cat="classwork">
-                        <div class="album-cover"><img src="images/photos/assignment-3/thumbs/bts.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Class Work</span>
-                            <h3>Unit 3</h3>
-                            
-                            <span class="album-count">5 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-assignment-5" data-cat="classwork">
-                        <div class="album-cover"><img src="images/photos/assignment-5/thumbs/ambeecoffee.jpg" alt="" width="1600" height="1063" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Class Work</span>
-                            <h3>Color Study</h3>
-                            
-                            <span class="album-count">6 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-midterm" data-cat="classwork">
-                        <div class="album-cover"><img src="images/photos/midterm/thumbs/shoes.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Class Work</span>
-                            <h3>Midterm</h3>
-                            <p class="album-blurb">Hands, shoes and a stick shift.</p>
-                            <span class="album-count">4 photos</span>
-                        </div>
-                    </a>
-                    <a class="album-card reveal" href="#album-final" data-cat="classwork">
-                        <div class="album-cover"><img src="images/photos/final/thumbs/admiration.jpg" alt="" width="1063" height="1600" loading="lazy" decoding="async"></div>
-                        <div class="album-text">
-                            <span class="album-cat">Class Work</span>
-                            <h3>Final Project</h3>
-                            
-                            <span class="album-count">7 photos</span>
-                        </div>
-                    </a>
-                    </div>
+                    <div class="filter-bar" data-filter-group="album-grid" role="group" aria-label="Filter albums"><button class="chip" data-filter="all" aria-pressed="true">All <span class="chip-count" data-count-for="all"></span></button><button class="chip" data-filter="portraits" aria-pressed="false">Portraits <span class="chip-count" data-count-for="portraits"></span></button><button class="chip" data-filter="shoots" aria-pressed="false">Shoots <span class="chip-count" data-count-for="shoots"></span></button><button class="chip" data-filter="events" aria-pressed="false">Events <span class="chip-count" data-count-for="events"></span></button><button class="chip" data-filter="everyday" aria-pressed="false">Everyday <span class="chip-count" data-count-for="everyday"></span></button><button class="chip" data-filter="classwork" aria-pressed="false">Class Work <span class="chip-count" data-count-for="classwork"></span></button></div>
+                    <div class="album-grid" id="album-grid"></div>
+                    <noscript><p class="center lede">Turn on JavaScript to browse the albums.</p></noscript>
                 </div>
 
                 <div class="album-view" id="album-view" hidden>
@@ -358,7 +83,7 @@
                     <div class="album-view-head">
                         <span class="eyebrow" data-album-cat></span>
                         <h2 class="section-title" data-album-title tabindex="-1"></h2>
-                        <p class="lede" data-album-blurb></p>
+                        <p class="lede" data-album-date></p>
                         <p class="album-view-meta" data-album-meta></p>
                     </div>
                     <div class="album-photos" id="album-photos"></div>

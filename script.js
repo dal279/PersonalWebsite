@@ -309,12 +309,16 @@
     });
 
     /* ----------------------------------------------------------------------
-       Photo albums + lightbox (photos.html)
-       Data comes from photos-data.js (window.PHOTO_ALBUMS)
+       Photos page: stats, featured slider, albums, lightbox
+       Everything here is built from photos-data.js (PHOTO_ALBUMS + PHOTO_FEATURED),
+       so counts and dates always match the photos that actually exist.
        ---------------------------------------------------------------------- */
 
     var ALBUMS = window.PHOTO_ALBUMS || [];
+    ALBUMS.forEach(function (a) { a.slug = a.folder || a.slug; }); // "folder" = folder name in images/photos
+    var FEATURED = window.PHOTO_FEATURED || [];
     var CAT_LABEL = { portraits: "Portraits", shoots: "Shoots", events: "Events", everyday: "Everyday", classwork: "Class Work" };
+    var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var albumIndex = document.getElementById("albums-index");
     var albumView = document.getElementById("album-view");
     var lightbox = document.querySelector(".lightbox");
@@ -325,12 +329,65 @@
     }
 
     function photoSrc(album, p, thumb) {
-        return "images/photos/" + album.slug + "/" + (thumb ? "thumbs/" : "") + p.f + ".jpg";
+        return "images/photos/" + encodeURIComponent(album.slug) + "/" + (thumb ? "thumbs/" : "") + encodeURIComponent(p.f) + ".jpg";
     }
 
     function photoAlt(album, p, i) {
         return (p.t ? p.t + ", from " : "Photo " + (i + 1) + " of " + album.photos.length + " from ") + album.title;
     }
+
+    function plural(n, word) {
+        return n + " " + word + (n === 1 ? "" : "s");
+    }
+
+    // "2026-03-04" -> {y, m, d} without time-zone surprises
+    function parseDay(s) {
+        var p = s.split("-");
+        return { y: +p[0], m: +p[1] - 1, d: +p[2] };
+    }
+
+    function fmtDay(s) {
+        var d = parseDay(s);
+        return MONTHS[d.m] + " " + d.d + ", " + d.y;
+    }
+
+    function photoDate(album, p) {
+        return p.d ? fmtDay(p.d) : (album.date || "");
+    }
+
+    function albumDate(a) {
+        if (a.date) return a.date;
+        var ds = a.photos.map(function (p) { return p.d; }).filter(Boolean).sort();
+        if (!ds.length) return "";
+        var lo = parseDay(ds[0]);
+        var hi = parseDay(ds[ds.length - 1]);
+        if (ds[0] === ds[ds.length - 1]) return fmtDay(ds[0]);
+        if (lo.y === hi.y && lo.m === hi.m) return MONTHS[lo.m] + " " + lo.d + " – " + hi.d + ", " + hi.y;
+        if (lo.y === hi.y) return MONTHS[lo.m] + " " + lo.d + " – " + MONTHS[hi.m] + " " + hi.d + ", " + hi.y;
+        return fmtDay(ds[0]) + " – " + fmtDay(ds[ds.length - 1]);
+    }
+
+    function el(tag, cls, text) {
+        var e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (text != null) e.textContent = text;
+        return e;
+    }
+
+    /* --- Stats: every number on the page comes from the data --- */
+    var totalPhotos = ALBUMS.reduce(function (n, a) { return n + a.photos.length; }, 0);
+    document.querySelectorAll("[data-stat]").forEach(function (s) {
+        var k = s.getAttribute("data-stat");
+        if (k === "photos") s.textContent = totalPhotos.toLocaleString();
+        if (k === "albums") s.textContent = ALBUMS.length;
+    });
+    document.querySelectorAll("[data-count-for]").forEach(function (s) {
+        var k = s.getAttribute("data-count-for");
+        var n = ALBUMS.filter(function (a) { return k === "all" || a.cat === k; }).length;
+        s.textContent = n;
+        var chipBtn = s.closest(".chip");
+        if (chipBtn && k !== "all") chipBtn.hidden = n === 0;
+    });
 
     /* --- Lightbox --- */
     var lb = null;
@@ -347,12 +404,8 @@
             var returnFocus = null;
 
             function chip(text, label) {
-                var li = document.createElement("li");
-                if (label) {
-                    var s = document.createElement("span");
-                    s.textContent = label;
-                    li.appendChild(s);
-                }
+                var li = el("li");
+                if (label) li.appendChild(el("span", null, label));
                 li.appendChild(document.createTextNode(text));
                 return li;
             }
@@ -375,8 +428,8 @@
                 full.src = fullSrc;
 
                 count.textContent = album.title + " · " + (index + 1) + " of " + album.photos.length;
-                title.textContent = p.t || "";
-                title.hidden = !p.t;
+                title.textContent = [p.t, photoDate(album, p)].filter(Boolean).join(" · ");
+                title.hidden = !title.textContent;
 
                 exif.innerHTML = "";
                 if (p.cam) exif.appendChild(chip(p.cam));
@@ -397,6 +450,7 @@
                 returnFocus = document.activeElement;
                 show(i);
                 if (!lightbox.open) lightbox.showModal();
+                document.dispatchEvent(new CustomEvent("lightbox:open"));
             }
 
             prev.addEventListener("click", function () { show(index - 1); });
@@ -415,6 +469,7 @@
 
             lightbox.addEventListener("close", function () {
                 img.removeAttribute("src");
+                document.dispatchEvent(new CustomEvent("lightbox:close"));
                 if (returnFocus && returnFocus.focus) returnFocus.focus({ preventScroll: true });
             });
 
@@ -437,43 +492,226 @@
         })();
     }
 
-    document.querySelectorAll("[data-open-album]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            var a = findAlbum(btn.getAttribute("data-open-album"));
-            if (!a || !lb) return;
-            var f = btn.getAttribute("data-open-photo");
-            var i = 0;
-            a.photos.forEach(function (p, k) { if (p.f === f) i = k; });
-            lb.open(a, i);
-        });
-    });
+    function openPhoto(a, f) {
+        if (!lb) return;
+        var i = 0;
+        a.photos.forEach(function (p, k) { if (p.f === f) i = k; });
+        lb.open(a, i);
+    }
 
-    /* --- Album view, driven by the URL hash (#album-vienna, #cat-portraits) --- */
+    /* --- Featured slider --- */
+    var slider = document.querySelector("[data-fslider]");
+    if (slider) (function () {
+        var slides = FEATURED.map(function (s) {
+            var a = findAlbum(s.album);
+            var p = a && a.photos.filter(function (x) { return x.f === s.f; })[0];
+            return p ? { a: a, p: p } : null;
+        }).filter(Boolean);
+
+        var section = slider.closest("section");
+        if (!slides.length) { if (section) section.hidden = true; return; }
+
+        var track = slider.querySelector(".fslider-track");
+        var dots = slider.querySelector(".fslider-dots");
+        var playBtn = slider.querySelector("[data-fslider-play]");
+        var DURATION = 6500;
+        var current = 0;
+        var timer = null;
+        var userPaused = reduceMotion;
+        var hold = 0; // hover / focus / lightbox
+        var slideEls = [];
+        var dotEls = [];
+
+        slides.forEach(function (s, i) {
+            var a = s.a, p = s.p;
+            var art = el("article", "fslide");
+            art.setAttribute("role", "group");
+            art.setAttribute("aria-roledescription", "slide");
+            art.setAttribute("aria-label", (i + 1) + " of " + slides.length + ": " + a.title);
+
+            var frame = el("button", "photo-frame fslide-photo");
+            frame.type = "button";
+            frame.setAttribute("aria-label", "View " + photoAlt(a, p, a.photos.indexOf(p)) + " full screen");
+            var im = el("img");
+            im.src = photoSrc(a, p, false);
+            im.alt = "";
+            im.width = p.w;
+            im.height = p.h;
+            if (i > 0) im.loading = "lazy";
+            frame.appendChild(im);
+            frame.addEventListener("click", function () { openPhoto(a, p.f); });
+
+            var info = el("div", "fslide-info");
+            info.appendChild(el("span", "eyebrow", "Featured · " + (i + 1) + " of " + slides.length));
+            info.appendChild(el("h2", "section-title", p.t || a.title));
+            var date = photoDate(a, p);
+            if (date) info.appendChild(el("p", "fslide-date", date));
+            var meta = el("ul", "photo-meta");
+            [["Album", a.title], ["Camera", p.cam], ["Lens", p.lens], ["Focal length", p.fl],
+             ["Exposure", [p.ap, p.ss, p.iso ? "ISO " + p.iso : ""].filter(Boolean).join(" · ")]
+            ].forEach(function (row) {
+                if (!row[1]) return;
+                var li = el("li");
+                li.appendChild(el("span", null, row[0]));
+                li.appendChild(el("span", null, row[1]));
+                meta.appendChild(li);
+            });
+            info.appendChild(meta);
+            var more = el("a", "link-more", "See the whole album");
+            more.href = "#album-" + encodeURIComponent(a.slug);
+            info.appendChild(more);
+
+            art.appendChild(frame);
+            art.appendChild(info);
+            track.appendChild(art);
+            slideEls.push(art);
+
+            var dot = el("button", "fslider-dot");
+            dot.type = "button";
+            dot.setAttribute("aria-label", "Show featured photo " + (i + 1) + ": " + a.title);
+            dot.appendChild(el("span", "fslider-dot-fill"));
+            dot.addEventListener("click", function () { go(i, true); });
+            dots.appendChild(dot);
+            dotEls.push(dot);
+        });
+
+        if (slides.length < 2) slider.classList.add("is-single");
+
+        function go(i, user) {
+            current = (i + slides.length) % slides.length;
+            track.style.transform = "translateX(" + (-100 * current) + "%)";
+            slideEls.forEach(function (s, k) {
+                var on = k === current;
+                s.setAttribute("aria-hidden", String(!on));
+                if (on) s.removeAttribute("inert"); else s.setAttribute("inert", "");
+            });
+            dotEls.forEach(function (d, k) {
+                d.classList.toggle("is-active", k === current);
+                d.setAttribute("aria-current", k === current ? "true" : "false");
+            });
+            restart();
+        }
+
+        function running() {
+            return !userPaused && hold === 0 && !document.hidden && slides.length > 1;
+        }
+
+        function restart() {
+            clearTimeout(timer);
+            slider.classList.remove("is-playing");
+            void slider.offsetWidth; // restart the dot's progress animation
+            if (running()) {
+                slider.classList.add("is-playing");
+                timer = setTimeout(function () { go(current + 1); }, DURATION);
+            }
+        }
+
+        function setHold(delta) {
+            hold = Math.max(0, hold + delta);
+            if (running()) restart(); else { clearTimeout(timer); slider.classList.remove("is-playing"); }
+        }
+
+        function syncPlayBtn() {
+            slider.classList.toggle("is-paused", userPaused);
+            playBtn.setAttribute("aria-label", userPaused ? "Play slideshow" : "Pause slideshow");
+        }
+
+        slider.style.setProperty("--fslider-duration", DURATION + "ms");
+        slider.querySelector("[data-fslider-prev]").addEventListener("click", function () { go(current - 1, true); });
+        slider.querySelector("[data-fslider-next]").addEventListener("click", function () { go(current + 1, true); });
+        playBtn.addEventListener("click", function () {
+            userPaused = !userPaused;
+            syncPlayBtn();
+            restart();
+        });
+
+        var viewport = slider.querySelector(".fslider-viewport");
+        viewport.addEventListener("mouseenter", function () { setHold(1); });
+        viewport.addEventListener("mouseleave", function () { setHold(-1); });
+        // Keyboard focus pauses (WCAG 2.2.2); a mouse click on the arrows doesn't
+        var focusHeld = false;
+        slider.addEventListener("focusin", function (e) {
+            var kb = e.target.matches && e.target.matches(":focus-visible");
+            if (kb && !focusHeld) { focusHeld = true; setHold(1); }
+        });
+        slider.addEventListener("focusout", function (e) {
+            if (focusHeld && !slider.contains(e.relatedTarget)) { focusHeld = false; setHold(-1); }
+        });
+        document.addEventListener("lightbox:open", function () { setHold(1); });
+        document.addEventListener("lightbox:close", function () { setHold(-1); });
+        document.addEventListener("visibilitychange", function () { restart(); });
+        slider.addEventListener("keydown", function (e) {
+            if (e.key === "ArrowLeft") go(current - 1, true);
+            if (e.key === "ArrowRight") go(current + 1, true);
+        });
+
+        // Swipe
+        var sx = null, sy = null;
+        viewport.addEventListener("touchstart", function (e) {
+            sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+        }, { passive: true });
+        viewport.addEventListener("touchend", function (e) {
+            if (sx === null) return;
+            var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(current + (dx < 0 ? 1 : -1), true);
+            sx = null;
+        });
+
+        syncPlayBtn();
+        go(0);
+    })();
+
+    /* --- Album grid + album view, driven by the URL hash (#album-vienna, #cat-portraits) --- */
     if (albumIndex && albumView && ALBUMS.length) {
+        var albumGrid = document.getElementById("album-grid");
         var grid = document.getElementById("album-photos");
         var section = document.getElementById("albums");
         var current = null;
+
+        ALBUMS.forEach(function (a) {
+            var cover = a.photos.filter(function (p) { return p.f === a.cover; })[0] || a.photos[0];
+            var card = el("a", "album-card reveal");
+            card.href = "#album-" + encodeURIComponent(a.slug);
+            card.setAttribute("data-cat", a.cat);
+            var c = el("div", "album-cover");
+            var im = el("img");
+            im.src = photoSrc(a, cover, true);
+            im.alt = "";
+            im.width = cover.w;
+            im.height = cover.h;
+            im.loading = "lazy";
+            im.decoding = "async";
+            c.appendChild(im);
+            var t = el("div", "album-text");
+            t.appendChild(el("span", "album-cat", CAT_LABEL[a.cat] || ""));
+            t.appendChild(el("h3", null, a.title));
+            var d = albumDate(a);
+            if (d) t.appendChild(el("span", "album-date", d));
+            t.appendChild(el("span", "album-count", plural(a.photos.length, "photo")));
+            card.appendChild(c);
+            card.appendChild(t);
+            albumGrid.appendChild(card);
+        });
 
         function renderAlbum(a) {
             current = a;
             albumView.querySelector("[data-album-cat]").textContent = CAT_LABEL[a.cat] || "";
             albumView.querySelector("[data-album-title]").textContent = a.title;
-            var blurb = albumView.querySelector("[data-album-blurb]");
-            blurb.textContent = a.blurb || "";
-            blurb.hidden = !a.blurb;
+            var dateEl = albumView.querySelector("[data-album-date]");
+            dateEl.textContent = albumDate(a);
+            dateEl.hidden = !dateEl.textContent;
 
             var cams = [];
             a.photos.forEach(function (p) { if (p.cam && cams.indexOf(p.cam) === -1) cams.push(p.cam); });
             albumView.querySelector("[data-album-meta]").textContent =
-                a.photos.length + (a.photos.length === 1 ? " photo" : " photos") + " · Shot on " + cams.join(" and ");
+                plural(a.photos.length, "photo") + (cams.length ? " · Shot on " + cams.join(" and ") : "");
 
             var frag = document.createDocumentFragment();
             a.photos.forEach(function (p, i) {
-                var b = document.createElement("button");
-                b.className = "album-photo";
+                var b = el("button", "album-photo");
                 b.type = "button";
                 b.setAttribute("aria-label", "View " + photoAlt(a, p, i));
-                var im = document.createElement("img");
+                var im = el("img");
                 im.src = photoSrc(a, p, true);
                 im.alt = "";
                 im.width = p.w;
@@ -492,10 +730,10 @@
             var nextA = ALBUMS[(k + 1) % ALBUMS.length];
             var pl = albumView.querySelector("[data-album-prev]");
             var nl = albumView.querySelector("[data-album-next]");
-            pl.href = "#album-" + prevA.slug;
+            pl.href = "#album-" + encodeURIComponent(prevA.slug);
             pl.textContent = prevA.title;
             pl.setAttribute("data-label", "Previous album");
-            nl.href = "#album-" + nextA.slug;
+            nl.href = "#album-" + encodeURIComponent(nextA.slug);
             nl.textContent = nextA.title;
             nl.setAttribute("data-label", "Next album");
         }
