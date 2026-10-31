@@ -2441,3 +2441,66 @@ a.tile:hover .tile-photo img {
 .tile-photo--wide {
     aspect-ratio: 16 / 9;
 }
+
+/* Food photos */
+.dish-photo {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--ph-bg);
+}
+
+.dish-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease-out);
+}
+
+.recipe-card:hover .dish-photo img {
+    transform: scale(1.04);
+}
+
+.dish-photo--feature {
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 60px -36px rgba(20, 15, 10, 0.5);
+}
+
+/* Kitchen notes quote */
+.big-quote {
+    margin: 0 auto;
+    max-width: 900px;
+    text-align: center;
+}
+
+.big-quote blockquote {
+    margin: 8px 0 22px;
+}
+
+.big-quote blockquote p {
+    font-size: clamp(56px, 10vw, 120px);
+    line-height: 1.02;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    text-wrap: balance;
+}
+
+.big-quote figcaption {
+    font-size: 19px;
+    color: var(--muted);
+}
+
+.big-quote figcaption::before {
+    content: "— ";
+    color: var(--accent);
+}
+
+.kitchen-quote {
+    padding: 140px 0;
+}
+
+@media (max-width: 833px) {
+    .kitchen-quote {
+        padding: 96px 0;
+    }
+}
