@@ -806,6 +806,12 @@
             card.appendChild(body);
             recipeGrid.appendChild(card);
         });
+        // Hide filter buttons for categories that have no recipes yet
+        document.querySelectorAll('[data-filter-group="recipe-grid"] [data-filter]').forEach(function (chip) {
+            var f = chip.getAttribute("data-filter");
+            if (f === "all") return;
+            chip.hidden = !RECIPES.some(function (r) { return r.category === f; });
+        });
     }
 
     if (document.querySelector("[data-recipe-name]")) {
